@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:time_tracker_flutter_course/common_widgets/show_alert_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,7 @@ enum EmailSignInFormType {
 
 class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
   //mixins introduction
-  EmailSignInForm({@required this.auth});
-  final AuthBase auth;
+
   @override
   _EmailSignInFormState createState() => _EmailSignInFormState();
 }
@@ -49,11 +49,12 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       _isLoading = true;
     });
     try {
+      final auth = Provider.of<AuthBase>(context, listen: false);
       //future.delayed for artificial slow network
       if (_formtype == EmailSignInFormType.signIn) {
-        await widget.auth.signInWithEmailAndPassword(_email, _password);
+        await auth.signInWithEmailAndPassword(_email, _password);
       } else {
-        await widget.auth.createUserWithEmailAndPassword(_email, _password);
+        await auth.createUserWithEmailAndPassword(_email, _password);
       }
       Navigator.of(context).pop();
     } catch (e) {
