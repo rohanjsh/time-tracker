@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker_flutter_course/common_widgets/show_alert_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:time_tracker_flutter_course/app/sign_in/validators.dart';
 import 'package:time_tracker_flutter_course/common_widgets/form_submit_button.dart';
+import 'package:time_tracker_flutter_course/common_widgets/show_exception_alert_dialog.dart';
 import 'package:time_tracker_flutter_course/services/auth.dart';
 
 enum EmailSignInFormType {
@@ -57,11 +59,13 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         await auth.createUserWithEmailAndPassword(_email, _password);
       }
       Navigator.of(context).pop();
-    } catch (e) {
-      showAlertDialog(context,
-          title: 'Sign in Failed',
-          defaultActionText: 'OK',
-          content: e.toString());
+    } on FirebaseAuthException catch (e) {
+      //catching auth exceptions
+      showExceptionAlertDialog(
+        context,
+        title: 'Sign in failed',
+        exception: e,
+      );
     } finally {
       setState(() {
         _isLoading = false;
@@ -148,6 +152,16 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
           hintText: 'test@test.com',
           errorText: showErrorText ? widget.errorEmailText : null),
     );
+  }
+
+  @override
+  void dispose() {
+    //JUST DO IT
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
   }
 
   @override
