@@ -1,29 +1,30 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:time_tracker_flutter_course/common_widgets/show_alert_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:time_tracker_flutter_course/app/sign_in/email_sign_in_model.dart';
 import 'package:time_tracker_flutter_course/app/sign_in/validators.dart';
 import 'package:time_tracker_flutter_course/common_widgets/form_submit_button.dart';
 import 'package:time_tracker_flutter_course/common_widgets/show_exception_alert_dialog.dart';
 import 'package:time_tracker_flutter_course/services/auth.dart';
 
-enum EmailSignInFormType {
-  //new type introduced
-  signIn,
-  register
-}
-
-class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
+//email password to bloc
+//BLOC + custom model class
+//Below is basic bloc pattern implementation for most of the cases
+//EmailSignInModel -> EmailSignInBloc -> Bloc will manage a Stream<EmailSignInModel> -> Form will rebuild via StreamBuilder<EmailSignInModel> -> form callbacks will update the model via the bloc.
+//refactoring widget is complex
+class EmailSignInFormStateful extends StatefulWidget
+    with EmailAndPasswordValidators {
   //mixins introduction
 
   @override
-  _EmailSignInFormState createState() => _EmailSignInFormState();
+  _EmailSignInFormStatefulState createState() =>
+      _EmailSignInFormStatefulState();
 }
 
-class _EmailSignInFormState extends State<EmailSignInForm> {
+class _EmailSignInFormStatefulState extends State<EmailSignInFormStateful> {
   final TextEditingController _emailController =
-      TextEditingController(); //textediting controller works only with stateful widgets
+      TextEditingController(); //text editing controller works only with stateful widgets
 
   final TextEditingController _passwordController = TextEditingController();
 
@@ -45,7 +46,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         .requestFocus(newFocus); //usedto get next field for input
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     setState(() {
       _submitted = true;
       _isLoading = true;

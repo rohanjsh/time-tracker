@@ -1,21 +1,33 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:time_tracker_flutter_course/app/sign_in/email_sign_in_page.dart';
+import 'package:time_tracker_flutter_course/app/sign_in/sign_in_bloc.dart';
 import 'package:time_tracker_flutter_course/app/sign_in/sign_in_button.dart';
 import 'package:time_tracker_flutter_course/app/sign_in/social_sign_in_button.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker_flutter_course/common_widgets/show_exception_alert_dialog.dart';
 import 'package:time_tracker_flutter_course/services/auth.dart';
 
-class SignInPage extends StatefulWidget {
+class SignInPage extends StatelessWidget {
+  const SignInPage({Key key, @required this.bloc}) : super(key: key);
+  final SignInBloc bloc;
+  //Scoped access can be repetitive
+  //consumer is the glue
   // final void Function(User) onSignIn; //callback generation
 
-  @override
-  _SignInPageState createState() => _SignInPageState();
-}
-
-class _SignInPageState extends State<SignInPage> {
-  bool _isLoading = false;
+  static Widget create(BuildContext context) {
+    final auth = Provider.of<AuthBase>(context, listen: false);
+    //first bloc implementation, use static create(context) for widgets that require bloc
+    return Provider<SignInBloc>(
+      create: (_) => SignInBloc(auth: auth),
+      dispose: (_, bloc) => bloc
+          .dispose(), //disposed properly when widget removed from widget tree
+      child: Consumer<SignInBloc>(
+        builder: (_, bloc, __) =>
+            SignInPage(bloc: bloc), //context,bloc,argument two underscores
+      ),
+    );
+  }
 
   void _showSignInError(BuildContext context, Exception exception) {
     if (exception is FirebaseException &&
@@ -31,42 +43,30 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<void> _signInAnonymously(BuildContext context) async {
     try {
-      setState(() => _isLoading = true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signInAnonymously();
+      await bloc.signInAnonymously();
 
       // onSignIn(user); //calling
     } on Exception catch (e) {
       _showSignInError(context, e);
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      setState(() => _isLoading = true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signInWithGoogle();
+      await bloc.signInWithGoogle();
       // onSignIn(user); //calling
     } on Exception catch (e) {
       _showSignInError(context, e);
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
   Future<void> _signInWithFacebook(BuildContext context) async {
     try {
-      setState(() => _isLoading = true);
-      final auth = Provider.of<AuthBase>(context, listen: false);
-      await auth.signInWithFacebook();
+      await bloc.signInWithFacebook();
 
       // onSignIn(user); //calling
     } on Exception catch (e) {
       _showSignInError(context, e);
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
@@ -79,17 +79,25 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    //provider.of can be repetitive and so pass dependencies to the widget constructor and reference them as instance variables
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: Text('Time Tracker'),
         elevation: 2.0,
       ),
-      body: _buildContent(context),
+      body: StreamBuilder<bool>(
+        stream: bloc.isLoadingStream, //ask to check connection state and errors
+        initialData: false, //not in a loading state when page opened
+        builder: (context, snapshot) {
+          return _buildContent(context, snapshot.data);
+        },
+      ),
     );
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, bool isLoading) {
     //underscore is private - accessible in file level itself
     return Padding(
       padding: EdgeInsets.all(16.0),
@@ -99,7 +107,7 @@ class _SignInPageState extends State<SignInPage> {
         children: <Widget>[
           SizedBox(
             height: 50.0,
-            child: _buildHeader(),
+            child: _buildHeader(isLoading),
           ),
           SizedBox(
             height: 48.0,
@@ -109,7 +117,7 @@ class _SignInPageState extends State<SignInPage> {
             text: 'Sign In with Google',
             textColor: Colors.white,
             color: Colors.black87,
-            onPressed: _isLoading ? null : () => _signInWithGoogle(context),
+            onPressed: isLoading ? null : () => _signInWithGoogle(context),
           ),
           SizedBox(
             height: 8.0,
@@ -119,8 +127,7 @@ class _SignInPageState extends State<SignInPage> {
               text: 'Sign In with Facebook',
               textColor: Colors.white,
               color: Color(0xff334D92),
-              onPressed:
-                  _isLoading ? null : () => _signInWithFacebook(context)),
+              onPressed: isLoading ? null : () => _signInWithFacebook(context)),
           SizedBox(
             height: 8.0,
           ),
@@ -128,7 +135,7 @@ class _SignInPageState extends State<SignInPage> {
             text: 'Sign In with Email',
             textColor: Colors.white,
             color: Colors.green[600],
-            onPressed: _isLoading ? null : () => _signInWithEmail(context),
+            onPressed: isLoading ? null : () => _signInWithEmail(context),
           ),
           SizedBox(
             height: 8.0,
@@ -144,14 +151,14 @@ class _SignInPageState extends State<SignInPage> {
               text: 'Sign In Anonymously',
               textColor: Colors.black87,
               color: Colors.tealAccent,
-              onPressed: _isLoading ? null : () => _signInAnonymously(context)),
+              onPressed: isLoading ? null : () => _signInAnonymously(context)),
         ],
       ),
     );
   }
 
-  Widget _buildHeader() {
-    if (_isLoading) {
+  Widget _buildHeader(bool isLoading) {
+    if (isLoading) {
       return Center(
         child: CircularProgressIndicator(),
       );
