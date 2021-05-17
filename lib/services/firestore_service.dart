@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
@@ -12,7 +14,7 @@ class FirestoreService {
 
   Stream<List<T>> collectionStream<T>({
     @required String path,
-    @required T Function(Map<String, dynamic> data) builder,
+    @required T Function(Map<String, dynamic> data, String documentID) builder,
   }) {
     final reference = FirebaseFirestore.instance.collection(path);
     final snapshot = reference.snapshots(); //returns streams
@@ -23,6 +25,7 @@ class FirestoreService {
           .map(
             (e) => builder(
               e.data(),
+              e.id, //doc id
             ),
           )
           .toList(),
