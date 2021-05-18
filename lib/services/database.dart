@@ -8,6 +8,7 @@ abstract class Database {
   Future<void> setJob(
       Job job); //single set for creating and updating data please
   Stream<List<Job>> jobsStream();
+  Future<void> deleteJob(Job job);
 }
 
 String documentIdFromCurrentDate() =>
@@ -19,11 +20,17 @@ class FirestoreDatabase implements Database {
 
   final _service = FirestoreService.instance;
 
+  @override
   Future<void> setJob(Job job) => _service.setData(
         path: APIPath.job(uid, job.id),
         data: job.toMap(),
       );
 
+  @override
+  Future<void> deleteJob(Job job) =>
+      _service.deleteData(path: APIPath.job(uid, job.id));
+
+  @override
   Stream<List<Job>> jobsStream() => _service.collectionStream(
         path: APIPath.jobs(uid),
         builder: (data, documentID) => Job.fromMap(data, documentID),
