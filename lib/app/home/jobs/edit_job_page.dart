@@ -16,7 +16,8 @@ class EditJobPage extends StatefulWidget {
 
   final Job job;
 
-  static Future<void> show(BuildContext context, {Job job}) async {
+  static Future<void> show(BuildContext context,
+      {Job job, Database database}) async {
     final database = Provider.of<Database>(context,
         listen:
             false); //explicit addition of provider as the database provider was not ancestor of addjobpage
