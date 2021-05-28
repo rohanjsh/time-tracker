@@ -19,7 +19,7 @@ class EditJobPage extends StatefulWidget {
     // final database = Provider.of<Database>(context,
     //     listen:
     //         false); //explicit addition of provider as the database provider was not ancestor of addjobpage
-    await Navigator.of(context).push(
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
           builder: (context) => EditJobPage(
                 database: database,
