@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,9 +16,9 @@ class EditJobPage extends StatefulWidget {
 
   static Future<void> show(BuildContext context,
       {Job job, Database database}) async {
-    final database = Provider.of<Database>(context,
-        listen:
-            false); //explicit addition of provider as the database provider was not ancestor of addjobpage
+    // final database = Provider.of<Database>(context,
+    //     listen:
+    //         false); //explicit addition of provider as the database provider was not ancestor of addjobpage
     await Navigator.of(context).push(
       MaterialPageRoute(
           builder: (context) => EditJobPage(

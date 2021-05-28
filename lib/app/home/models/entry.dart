@@ -33,7 +33,7 @@ class Entry {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'jobId': jobId,
-      'start': start.millisecondsSinceEpoch,
+      'start': start.millisecondsSinceEpoch, //important
       'end': end.millisecondsSinceEpoch,
       'comment': comment,
     };

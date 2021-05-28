@@ -23,6 +23,7 @@ class EntryListItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Expanded(
+              //fill available space
               child: _buildContents(context),
             ),
             Icon(Icons.chevron_right, color: Colors.grey),
@@ -34,7 +35,8 @@ class EntryListItem extends StatelessWidget {
 
   Widget _buildContents(BuildContext context) {
     final dayOfWeek = Format.dayOfWeek(entry.start);
-    final startDate = Format.date(entry.start);
+    final startDate =
+        Format.date(entry.start); //global access instead of scoped access
     final startTime = TimeOfDay.fromDateTime(entry.start).format(context);
     final endTime = TimeOfDay.fromDateTime(entry.end).format(context);
     final durationFormatted = Format.hours(entry.durationInHours);
@@ -50,6 +52,7 @@ class EntryListItem extends StatelessWidget {
           SizedBox(width: 15.0),
           Text(startDate, style: TextStyle(fontSize: 18.0)),
           if (job.ratePerHour > 0.0) ...<Widget>[
+            //collection if - dart, spread operator, collection for
             Expanded(child: Container()),
             Text(
               payFormatted,

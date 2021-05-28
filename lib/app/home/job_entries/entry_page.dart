@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:time_tracker_flutter_course/common_widgets/date_time_picker.dart';
+import 'package:time_tracker_flutter_course/common_widgets/date_time_picker.dart';
 import 'package:time_tracker_flutter_course/app/home/job_entries/format.dart';
 import 'package:time_tracker_flutter_course/app/home/models/entry.dart';
 import 'package:time_tracker_flutter_course/app/home/models/job.dart';
@@ -87,7 +87,7 @@ class _EntryPageState extends State<EntryPage> {
         elevation: 2.0,
         title: Text(widget.job.name),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             child: Text(
               widget.entry != null ? 'Update' : 'Create',
               style: TextStyle(fontSize: 18.0, color: Colors.white),
@@ -103,8 +103,8 @@ class _EntryPageState extends State<EntryPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // _buildStartDate(),
-              // _buildEndDate(),
+              _buildStartDate(),
+              _buildEndDate(),
               SizedBox(height: 8.0),
               _buildDuration(),
               SizedBox(height: 8.0),
@@ -116,25 +116,25 @@ class _EntryPageState extends State<EntryPage> {
     );
   }
 
-  // Widget _buildStartDate() {
-  //   return DateTimePicker(
-  //     labelText: 'Start',
-  //     selectedDate: _startDate,
-  //     selectedTime: _startTime,
-  //     onSelectedDate: (date) => setState(() => _startDate = date),
-  //     onSelectedTime: (time) => setState(() => _startTime = time),
-  //   );
-  // }
+  Widget _buildStartDate() {
+    return DateTimePicker(
+      labelText: 'Start',
+      selectedDate: _startDate,
+      selectedTime: _startTime,
+      onSelectedDate: (date) => setState(() => _startDate = date),
+      onSelectedTime: (time) => setState(() => _startTime = time),
+    );
+  }
 
-  // Widget _buildEndDate() {
-  //   return DateTimePicker(
-  //     labelText: 'End',
-  //     selectedDate: _endDate,
-  //     selectedTime: _endTime,
-  //     onSelectedDate: (date) => setState(() => _endDate = date),
-  //     onSelectedTime: (time) => setState(() => _endTime = time),
-  //   );
-  // }
+  Widget _buildEndDate() {
+    return DateTimePicker(
+      labelText: 'End',
+      selectedDate: _endDate,
+      selectedTime: _endTime,
+      onSelectedDate: (date) => setState(() => _endDate = date),
+      onSelectedTime: (time) => setState(() => _endTime = time),
+    );
+  }
 
   Widget _buildDuration() {
     final currentEntry = _entryFromState();
