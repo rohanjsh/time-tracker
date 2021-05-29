@@ -7,11 +7,13 @@ class SignInButton extends CustomRaisedButton {
 
   SignInButton({
     @required String text,
+    Key key,
     Color color,
     Color textColor,
     VoidCallback onPressed,
   })  : assert(text != null), //correct error detection
         super(
+          key: key,
           child: Text(
             text,
             style: TextStyle(

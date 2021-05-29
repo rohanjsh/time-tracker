@@ -25,6 +25,9 @@ class LandingPage extends StatelessWidget {
   //       //widget.auth used to access the variable from outside the state class
   //       widget.auth.currentUser); //to check user is logged in or not
   // }
+  const LandingPage({Key key, @required this.databaseBuilder})
+      : super(key: key);
+  final Database Function(String) databaseBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +45,7 @@ class LandingPage extends StatelessWidget {
             return SignInPage.create(context);
           }
           return Provider<Database>(
-              create: (_) => FirestoreDatabase(uid: user.uid),
+              create: (_) => databaseBuilder(user.uid), //added while rasting
               child: HomePage());
         }
         return Scaffold(

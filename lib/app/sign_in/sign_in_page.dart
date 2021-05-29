@@ -17,6 +17,8 @@ class SignInPage extends StatelessWidget {
   //consumer is the glue
   // final void Function(User) onSignIn; //callback generation
 
+  static const Key emailPasswordKey = Key('email-password');
+
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context, listen: false);
     //first bloc implementation, use static create(context) for widgets that require bloc
@@ -136,6 +138,7 @@ class SignInPage extends StatelessWidget {
             height: 8.0,
           ),
           SignInButton(
+            key: emailPasswordKey,
             text: 'Sign In with Email',
             textColor: Colors.white,
             color: Colors.green[600],
