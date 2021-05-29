@@ -12,7 +12,11 @@ class Job {
     if (data == null) {
       return null;
     }
+
     final String name = data['name'];
+    if (name == null) {
+      return null;
+    }
     final int ratePerHour = data['ratePerHour'];
     return Job(
       name: name,
@@ -27,4 +31,25 @@ class Job {
       'ratePerHour': ratePerHour,
     };
   }
+
+  //added when testing model classes
+  //using code generation to automatic generate these below values
+  @override
+  // TODO: implement hashCode
+  int get hashCode => hashValues(id, name, ratePerHour);
+
+  //equality
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
+    final Job otherJob = other;
+    return id == otherJob.id &&
+        ratePerHour == otherJob.ratePerHour &&
+        name == otherJob.name;
+  }
+
+  //always implement
+  @override
+  String toString() => 'id: $id, name: $name, ratePerHour: $ratePerHour';
 }
